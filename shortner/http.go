@@ -29,6 +29,10 @@ func (s HttpServer) FrontController(w http.ResponseWriter, r *http.Request) {
 		serveShorten(s.App.repository, r, w)
 		break
 
+	case "/all":
+		serveAll(s.App.repository, r, w)
+		break
+
 	default:
 		serveRedirect(s.App.repository, r, w)
 		break
@@ -68,4 +72,12 @@ func serveRedirect(repo Repository, r *http.Request, w http.ResponseWriter) {
 	w.WriteHeader(http.StatusTemporaryRedirect)
 
 	fmt.Fprintf(w, "Redirecting you to URL is <a href='%'>%s</a>\n", location, location)
+}
+
+func serveAll(repo Repository, r *http.Request, w http.ResponseWriter) {
+	fmt.Fprint(w, "Listing domains:\n")
+
+	for _, v := range repo.get() {
+		fmt.Fprintf(w, "%s\t%s\n", v.short, v.long)
+	}
 }
